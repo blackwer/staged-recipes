@@ -1,0 +1,55 @@
+{% set version = "v0.1.0" %}
+{% set name = "pvfmm" %}
+{% set sha256 = "c6f1eda8bffed3514037c71733011124ee8ed4cbc6ca60f58de6229051dab0a2" %}
+
+package:
+  name: {{ name }}
+  version: {{ version }}
+
+source:
+  url: https://github.com/blackwer/{{ name }}/archive/{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+build:
+  number: 0
+  skip: true  # [win and py2k]
+
+requirements:
+  build:
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+    - cmake>=3.9
+    - mkl-devel
+    - openmpi # [osx]
+    - llvm-openmp  # [osx]
+  host:
+    - blas=*=mkl
+    - openmpi # [osx]
+    - llvm-openmp # [osx]
+    - fftw
+  run:
+    - mkl # [osx]
+
+test:
+  commands:
+    - test -f $PREFIX/include/pvfmm.hpp
+    - test -f $PREFIX/lib/libpvfmm_static.a
+    - test -f $PREFIX/lib/libpvfmm.dylib # [osx]
+    - test -f $PREFIX/lib/libpvfmm.so # [linux]
+
+
+about:
+  home: http://github.com/blackwer/pvfmm
+  license: GPL3
+  license_file: COPYING
+  summary: pvfmm with periodic boundary conditions
+  description: |
+    PVFMM is a library for solving certain types of elliptic partial differential equations.
+
+    We support Stokes, Poisson, and Helmholtz problems on the unit cube, with free-space or periodic boundary conditions, with constant or mildly varying coefficients. Our method is based on volume potential integral equation formulation accelerated by the Kernel Independent Fast Multipole Method.
+
+#  doc_url: http://github.com/blackwer/pvfmm
+
+extra:
+  recipe-maintainers:
+    - blackwer
